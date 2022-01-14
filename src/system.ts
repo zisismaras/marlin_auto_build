@@ -70,7 +70,9 @@ export function runPlatformIO(boardEnv: string) {
 
 export async function commitTrackers() {
     await new Promise<void>(function(resolve, reject) {
-        exec(`git config user.name "${process.env.GITHUB_ACTOR}" && \
+        exec(`cd .. && \
+            rm -rf marlin_auto_build && \
+            git config user.name "${process.env.GITHUB_ACTOR}" && \
             git config user.email "${process.env.GITHUB_ACTOR}@users.noreply.github.com" && \
             git add . && \
             git commit -m "new build"
