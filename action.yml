@@ -6,10 +6,9 @@ branding:
   icon: 'code'
   color: 'green'
 
-secrets:
+inputs:
   token:
     default: ${{ github.token }}
-inputs:
   repository:
     default: ${{ github.repository }}
   actor:
@@ -19,8 +18,6 @@ runs:
   using: "composite"
   steps:
     - uses: actions/checkout@v2.3.4
-      with:
-        token: ${{ secrets.token }}
     - uses: actions/setup-node@v2
       with:
         node-version: '16'
@@ -28,9 +25,13 @@ runs:
       with:
         python-version: '3.9'
     - run: pip install -U platformio
+      shell: bash
     - run: npm install
+      shell: bash
     - run: npm run build
+      shell: bash
     - run: node ./lib/runner.js --color
+      shell: bash
       env:
         GITHUB_TOKEN: ${{ secrets.token }}
         GITHUB_REPOSITORY: ${{ inputs.repository }}
