@@ -6,7 +6,7 @@ import {getLatestStable, getLatestNightly, createRelease, uploadAsset} from "./g
 import {loadBuilds, BuildSchema} from "./prepare";
 import {processBuild} from "./build";
 import {registerQuote} from "./quote";
-import {downloadStable, commitTrackers, downloadNightly} from "./system";
+import {downloadStable, downloadNightly} from "./system";
 
 const dryRun = process.argv[2] === "--dry";
 if (dryRun) {
@@ -49,7 +49,6 @@ if (dryRun) {
     if (!dryRun) {
         console.log(chalk.green("checkpointing new releases"));
         await dirSetupAfter();
-        await commitTrackers();
     }
 
     console.log(chalk.green("all done!"));

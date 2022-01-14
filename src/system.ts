@@ -67,30 +67,3 @@ export function runPlatformIO(boardEnv: string) {
         });
     });
 }
-
-export async function commitTrackers() {
-    await new Promise<void>(function(resolve, reject) {
-        exec(`cd .. && \
-            rm -rf marlin_auto_build && \
-            git config user.name "${process.env.GITHUB_ACTOR}" && \
-            git config user.email "${process.env.GITHUB_ACTOR}@users.noreply.github.com" && \
-            git add . && \
-            git commit -m "new build"
-        `, function(err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
-    });
-    return retry(() => new Promise<void>(function(resolve, reject) {
-        exec("git push", function(err) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
-    }), {retries: 3});
-}
