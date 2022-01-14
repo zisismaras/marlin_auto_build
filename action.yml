@@ -33,6 +33,6 @@ runs:
     - run: node ./lib/runner.js --color
       shell: bash
       env:
-        GITHUB_TOKEN: ${{ secrets.token }}
+        GITHUB_TOKEN: ${{ inputs.token }}
         GITHUB_REPOSITORY: ${{ inputs.repository }}
         GITHUB_ACTOR: ${{ inputs.actor }}
