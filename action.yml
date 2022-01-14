@@ -33,13 +33,11 @@ runs:
         python-version: '3.9'
     - run: pip install -U platformio
       shell: bash
-    - run: cd marlin_auto_build
+    - run: cd marlin_auto_build && npm install
       shell: bash
-    - run: npm install
+    - run: cd marlin_auto_build && npm run build
       shell: bash
-    - run: npm run build
-      shell: bash
-    - run: node ./lib/runner.js --color
+    - run: cd marlin_auto_build && node ./lib/runner.js --color
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.token }}
