@@ -33,6 +33,8 @@ runs:
         python-version: '3.9'
     - run: pip install -U platformio
       shell: bash
+    - run: cd marlin_auto_build
+      shell: bash
     - run: npm install
       shell: bash
     - run: npm run build
