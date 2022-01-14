@@ -51,3 +51,4 @@ runs:
         git add .
         git commit -m "new build"
         git push
+      shell: bash
