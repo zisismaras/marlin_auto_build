@@ -1,0 +1,37 @@
+{
+  "name": "marlin_auto_build",
+  "version": "1.0.0",
+  "description": "Continuous automatic builds of the Marlin 3d-printer firmware",
+  "main": "lib/runner.js",
+  "scripts": {
+    "watch": "tsc -w",
+    "build": "tsc --build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zisismaras/marlin_auto_build.git"
+  },
+  "author": {
+    "name": "Zisis Maras",
+    "email": "contact@zisismaras.me"
+  },
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/zisismaras/marlin_auto_build/issues"
+  },
+  "homepage": "https://github.com/zisismaras/marlin_auto_build#readme",
+  "dependencies": {
+    "axios": "0.24.0",
+    "chalk": "4.1.2",
+    "dayjs": "1.10.7",
+    "p-retry": "4.6.1",
+    "zod": "3.11.6"
+  },
+  "devDependencies": {
+    "@types/node": "16.10.1",
+    "@typescript-eslint/eslint-plugin": "4.28.4",
+    "@typescript-eslint/parser": "4.28.4",
+    "eslint": "7.31.0",
+    "typescript": "4.5.4"
+  }
+}
