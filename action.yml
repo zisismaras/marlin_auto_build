@@ -1,24 +1,26 @@
 name: marlin_auto_build
 description: 'Continuous automatic builds of the Marlin 3d-printer firmware'
 author: 'zisismaras'
+
 branding:
   icon: 'code'
   color: 'green'
 
-on:
-  push:
-    paths:
-      - 'builds/**'
-  schedule:
-    - cron:  '30 3 * * *'
+secrets:
+  token:
+    default: ${{ github.token }}
+inputs:
+  repository:
+    default: ${{ github.repository }}
+  actor:
+    default: ${{ github.actor }}
 
-jobs:
-  create_builds:
-    runs-on: ubuntu-latest 
-    steps:
+runs:
+  using: "composite"
+  steps:
     - uses: actions/checkout@v2.3.4
       with:
-        token: ${{ github.token }}
+        token: ${{ secrets.token }}
     - uses: actions/setup-node@v2
       with:
         node-version: '16'
@@ -30,4 +32,6 @@ jobs:
     - run: npm run build
     - run: node ./lib/runner.js --color
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.token }}
+        GITHUB_REPOSITORY: ${{ inputs.repository }}
+        GITHUB_ACTOR: ${{ inputs.actor }}
