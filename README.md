@@ -1,11 +1,12 @@
 # Marlin auto build
 
-Marlin auto build is a build system for the [Marlin firmware](https://github.com/MarlinFirmware/Marlin) that allows you to build firmwares for your printer directly on github using [github actions](https://github.com/features/actions) without having to install anything on your local machine.  
-The action will run every night automatically and check for new stable releases plus the latest changes on the `bugfix-2.0.x` Marlin branch. Then it will apply your own configuration changes on them and build them.  
-The system includes a little helper that allows you to define your changes using javascript. As Marlin evolves usually the default [configurations](https://github.com/MarlinFirmware/Configurations) change with it. Using the javascript configurator helps keep your changes portable while new example configurations are released.
+Marlin auto build is a build system for [Marlin](https://github.com/MarlinFirmware/Marlin) that allows you to build firmwares for your printer directly on github using [github actions](https://github.com/features/actions) without having to install anything on your local machine.  
+The action can run on a schedule automatically and check for new stable releases plus the latest changes on the `bugfix-2.0.x` Marlin branch. Then it will apply your own configuration changes on them and build them.  
+The system includes a little helper that allows you to define your changes using javascript. As Marlin evolves usually the default [configurations](https://github.com/MarlinFirmware/Configurations) change with it. Using the javascript configurator helps keep your own changes portable while new default configurations are released.
 
 - [Marlin auto build](#marlin-auto-build)
   - [Getting started](#getting-started)
+    - [Build files](#build-files)
   - [Configuration format](#configuration-format)
     - [Enabling an option](#enabling-an-option)
     - [Enabling an option with a value](#enabling-an-option-with-a-value)
@@ -23,7 +24,40 @@ The system includes a little helper that allows you to define your changes using
   - [Builds using Marlin auto build](#builds-using-marlin-auto-build)
 
 ## Getting started
-TODO action setup + starter  
+
+If you are unfamiliar with github actions you can check the docs [here](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) but all you have to do is the following:
+
+1. Create a new empty repository.
+2. In your repository, create the `.github/workflows/` directory to store your workflow files.
+3. In the `.github/workflows/` directory, create a new file called `marlin_auto_build.yml` and add the following code.
+```yml
+name: marlin_auto_build
+
+on:
+  # trigger if we change a build
+  push:
+    paths:
+      - 'builds/**'
+  # trigger every night at 03:30
+  schedule:
+    - cron:  '30 3 * * *'
+
+jobs:
+  create_builds:
+    runs-on: ubuntu-latest 
+    steps:
+    - uses: zisismaras/marlin_auto_build@v1
+
+```
+4. Create a `builds` directory in the root folder (this is where you will add your build files).
+5. You can also add a `README.md` to describe your builds and a `LICENSE`. 
+6. Commit these changes and push them to your GitHub repository.
+
+You can take a look [here](https://github.com/zisismaras/ender_3_4.2.2_firmware) as a complete example.
+
+### Build files
+
+Build files should be saved in the `builds` directory as `.js` files (eg. `my-build.js`) and committed to git.  
 Here is a build i am using for my Ender 3 that enables the bed leveling helper plus a little change required by octoprint.
 ```js
 module.exports = {
@@ -56,7 +90,7 @@ module.exports = {
     }
 };
 ```
-As you can see the build is actually a json file but writing it in javascript allows us to include comments and add any custom logic if needed.  
+As you can see the build is basically a json file but writing it in javascript allows us to include comments and add any custom logic if needed.  
 Let's explain all the different properties of the file.  
 
 * `board_env`
@@ -67,7 +101,7 @@ Let's explain all the different properties of the file.
   - `{{marlin_version}}` The version of Marlin we are using (or the commit hash of the bugfix branch if it's a nightly build)
   - `{{current_date}}` The current date formatted as YYYYMMDDHHmm
   - `{{timestamp}}` The current date as a unix timestamp
-  - `{{uid}}` A random 6-digit number (Use this to differentiate between 2 firmwares with the same name)
+  - `{{uid}}` A random 6-digit number
 * `based_on`
   A pointer to a repository containing the base configuration we want to use. Usually we point at Marlin's default configurations but you can use any repo. The `path` should point to the directory that contains the actual configurations (`Configuration.h` and `Configuration_adv.h`).
 * `configuration` and `configuration_adv` The options we want to enable or disable on the two files, more info below.
@@ -158,7 +192,7 @@ enable: [
 ## Extended builds and partials
 
 For cases where you need to build multiple different firmwares for the same printer (or the same build for different printers), Marlin auto build includes an extension system to help reduce duplication and keep things nice and clean.    
-Using the example build on [Getting started](#getting-started) as a base (saved as `/builds/base.js`) we can define an extension build like this:
+Using the example build [above](#build-files) as a base (saved as `/builds/base.js`) we can define an extension build like this:
 
 ```js
 module.exports = {
@@ -242,18 +276,18 @@ module.exports = {
 
 ### Extra notes
 
-* Both `extends` and `includes` can accept an array of multiple builds (`includes: ["partial1.js", "partial2.js"]`). This is great for partials so we can have fine grained control of the different set of changes we want to include in a build but for extended builds it is not recommended since you can end up with long inheritance chains which are confusing and hard to track.
+* Both `extends` and `includes` can accept an array of multiple builds (`includes: ["partial1.js", "partial2.js"]`). This is great for partials so we can have fine-grained control of the different set of changes we want to include in a build but for extended builds it is not recommended since you can end up with long inheritance chains which are confusing and hard to track.
 * If you only want to use a base build for extensions but don't really need to use the base itself you can add `active: false` on it.
 * If an option is defined in both the base and an extension, the extension takes precedence. You should check the action logs for warnings about conflicts.
 * If an option is defined in both the base and a partial, the base takes precedence. You should check the action logs for warnings about conflicts.
 
 ## Build releases
 
-After each action invocation all built firmwares will be available for download in the repository's github releases.  
+After each action invocation any built firmwares will be available for download in the repository's github releases.  
 Two releases will be created, one for stable builds and one for nightly builds.  
-Nightly releases are tagged as `prerelease` so the stable release is always shown as the latest.  
-The action is also triggered every time you add a new build or update an existing build.  
-Updating a build will update the built file for the existing release but deleting a build will not delete the already built files.
+New releases are only created if there is a new stable Marlin version or a new commit on `bugfix`.  
+Nightly releases are tagged as `prerelease` so the stable release is always shown as the latest.   
+Updating a build will update the built file in the latest releases but deleting a build will not delete the already built files.
 
 ## Autogenerated Configurations
 
@@ -307,4 +341,5 @@ If this is actually proved to be useful and take off, we could end with a nice d
 
 If you have a repository that uses Marlin auto build for any printer, open an issue or pull request for it to be added here.
 
-TODO add my Ender-3 repo
+* [Ender-3 4.2.2](https://github.com/zisismaras/ender_3_4.2.2_firmware) by [@zisismaras](https://github.com/zisismaras)
+  > Default stock builds plus mesh leveling
