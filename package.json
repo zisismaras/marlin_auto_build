@@ -1,6 +1,6 @@
 {
   "name": "marlin_auto_build",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Continuous automatic builds of the Marlin 3d-printer firmware",
   "main": "lib/runner.js",
   "scripts": {
