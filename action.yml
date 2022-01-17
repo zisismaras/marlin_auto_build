@@ -46,9 +46,11 @@ runs:
         GITHUB_ACTOR: ${{ inputs.actor }}
     - run: |
         rm -rf marlin_auto_build
-        git config user.name 'github-actions[bot]'
-        git config user.email 'github-actions[bot]@users.noreply.github.com'
-        git add .
-        git commit -m "new build"
-        git push
+        if [ -n "$(git status --porcelain)" ]; then
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "new build"
+          git push
+        fi
       shell: bash
