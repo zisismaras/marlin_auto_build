@@ -112,6 +112,20 @@ async function shouldBuild(
             const hash = createHash("md5");
             hash.update(await readFile(buildName));
             const md5 = hash.digest("hex");
+            //skip disabled builds
+            if (loadedBuild.active === false || (loadedBuild.only && loadedBuild.only !== kind)) {
+                //If they were enabled before we don't want to lose their info so we still need to add them to the tracker
+                newBuilds[buildName] = {
+                    version: latestVersion,
+                    md5,
+                    build: loadedBuild,
+                    action: "ignore",
+                    //can be undefined
+                    assetId: trackedBuilds[buildName].assetId
+                };
+                console.log(chalk.cyan(`[disabled] ${chalk.underline(buildName)}`));
+                continue;
+            }
             if (!trackedBuilds[buildName]) {
                 //it's a new build
                 newBuilds[buildName] = {version: latestVersion, md5, build: loadedBuild, action: "create"};
@@ -133,6 +147,11 @@ async function shouldBuild(
     } catch (_e) {
         //tracker does not exist, probably the first run
         for (const [buildName, loadedBuild] of Object.entries(loadedBuilds)) {
+            //skip disabled builds
+            if (loadedBuild.active === false || (loadedBuild.only && loadedBuild.only !== kind)) {
+                console.log(chalk.cyan(`[disabled] ${chalk.underline(buildName)}`));
+                continue;
+            }
             const hash = createHash("md5");
             hash.update(await readFile(buildName));
             const md5 = hash.digest("hex");

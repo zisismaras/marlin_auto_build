@@ -7,6 +7,7 @@ const buildSchema = z.object({
     board_env: z.string().min(1),
     include: z.string().min(1).or(z.array(z.string().min(1))).optional(),
     active: z.boolean().optional(),
+    only: z.literal("stable").or(z.literal("nightly")).optional(),
     meta: z.object({
         stable_name: z.string().min(1),
         nightly_name: z.string().min(1)
@@ -152,10 +153,7 @@ export async function loadBuilds() {
                 throw new Error(`Invalid build ${buildName}`);
             }
         }
-        const build = builder.build as BuildSchema;
-        if (build.active !== false) {
-            loaded[buildName] = build;
-        }
+        loaded[buildName] = <BuildSchema>builder.build;
     }
 
     //check unique asset names
@@ -337,6 +335,7 @@ function mergeCoreProperties(
 ) {
     base.meta = extension.meta;
     base.active = extension.active;
+    base.only = extension.only;
     base.board_env = extension.board_env || base.board_env;
     base.based_on = {
         repo: extension?.based_on?.repo || base?.based_on?.repo,

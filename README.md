@@ -96,6 +96,7 @@ Let's explain all the different properties of the file.
 * `board_env`
   This is the env required by platformio to build the correct firmware for your specific motherboard. While we could infer this automatically (most of the time), having it hard-coded on the file is better since the system will run on its own without user interraction. Marlin has a little [guide](https://marlinfw.org/docs/basics/install_platformio_cli.html) on how to find the correct `board_env` for your printer.
 * `active` Enables/disables the build. Default is `true`.
+* `only` Set to `"stable"` or `"nightly"` to build only a single branch. By default both are built.
 * `meta`
   Here we define the filenames we want for our 2 firmwares (stable and nightly). They can be whatever you want. There is also a set of variables (enclosed in `{{}}`) that you can use in them:
   - `{{marlin_version}}` The version of Marlin we are using (or the commit hash of the bugfix branch if it's a nightly build)
