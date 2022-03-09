@@ -68,10 +68,10 @@ function updateConfiguration(configuration: string[], updates: BuildSchema["conf
             continue;
         }
         for (const enablement of updates.enable) {
-            if (typeof enablement === "string" && line.includes(`#define ${enablement}`)) {
+            if (typeof enablement === "string" && (line + "\n").match(new RegExp(`#define ${enablement}\\s+`))) {
                 configuration[index] = `${originalIndent(line)}#define ${enablement} //ORIGINAL: ${line}`;
                 appliedEnablements.push(enablement);
-            } else if (Array.isArray(enablement) && line.includes(`#define ${enablement[0]}`)) {
+            } else if (Array.isArray(enablement) && (line + "\n").match(new RegExp(`#define ${enablement[0]}\\s+`))) {
                 let formattedEnabledMent;
                 if (typeof enablement[1] === "string") {
                     if (enablement[1].includes("__quote__:")) {
@@ -89,7 +89,7 @@ function updateConfiguration(configuration: string[], updates: BuildSchema["conf
             }
         }
         for (const disablement of updates.disable) {
-            if (line.includes(`#define ${disablement}`)) {
+            if ((line + "\n").match(new RegExp(`#define ${disablement}\\s+`))) {
                 configuration[index] = `${originalIndent(line)}// ${line} //ORIGINAL: ${line}`;
                 appliedDisablements.push(disablement);
             }
