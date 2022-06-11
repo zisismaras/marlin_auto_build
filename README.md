@@ -1,7 +1,7 @@
 # Marlin auto build
 
 Marlin auto build is a build system for [Marlin](https://github.com/MarlinFirmware/Marlin) that allows you to build firmwares for your printer directly on github using [github actions](https://github.com/features/actions) without having to install anything on your local machine.  
-The action can run on a schedule automatically and check for new stable releases plus the latest changes on the `bugfix-2.0.x` Marlin branch. Then it will apply your own configuration changes on them and build them.  
+The action can run on a schedule automatically and check for new stable releases plus the latest changes on the `bugfix-2.1.x` Marlin branch. Then it will apply your own configuration changes on them and build them.  
 The system includes a little helper that allows you to define your changes using javascript. As Marlin evolves usually the default [configurations](https://github.com/MarlinFirmware/Configurations) change with it. Using the javascript configurator helps keep your own changes portable while new default configurations are released.
 
 - [Marlin auto build](#marlin-auto-build)
@@ -59,7 +59,7 @@ Build files should be saved in the `builds` directory as `.js` files (eg. `my-bu
 Here is a build i am using for my Ender 3 that enables the bed leveling helper plus a little change required by octoprint.
 ```js
 module.exports = {
-    board_env: "STM32F103RET6_creality",
+    board_env: "STM32F103RE_creality",
     active: true,
     meta: {
         stable_name: "ender_3_4.2.2-{{marlin_version}}-{{uid}}",
@@ -69,13 +69,13 @@ module.exports = {
         repo: "https://github.com/MarlinFirmware/Configurations/",
         path: "/config/examples/Creality/Ender-3/CrealityV422/",
         stable_branch: "release-{{marlin_version}}",
-        nightly_branch: "bugfix-2.0.x"
+        nightly_branch: "bugfix-2.1.x"
     },
     configuration: {
         enable: [
             //standard leveling menu helper
-            "LEVEL_BED_CORNERS",
-            "LEVEL_CENTER_TOO"
+            "LCD_BED_TRAMMING",
+            "BED_TRAMMING_INCLUDE_CENTER"
         ],
         disable: []
     },
@@ -116,8 +116,8 @@ To enable an option, add the option's name to the `enable` array:
 ```js
 //...
 enable: [
-    "LEVEL_BED_CORNERS",
-    "LEVEL_CENTER_TOO"
+    "LCD_BED_TRAMMING",
+    "BED_TRAMMING_INCLUDE_CENTER"
 ]
 ```
 
@@ -242,7 +242,7 @@ module.exports = {
 ```js
 // builds/manualBedMesh5x5.js
 module.exports = {
-    extends: "builds/base.js", //we are still using our base build but it's not required
+    extends: "builds/base.js", //we can extend and include at the same time
     include: "builds/manualBedMesh.js", // <--
     meta: {
         stable_name: "ender_3_4.2.2-{{marlin_version}}-manual_mesh_5x5-{{uid}}",
@@ -259,7 +259,7 @@ module.exports = {
 ```js
 // builds/manualBedMesh7x7.js
 module.exports = {
-    extends: "builds/base.js", //we are still using our base build but it's not required
+    extends: "builds/base.js", //we can extend and include at the same time
     include: "builds/manualBedMesh.js", // <--
     meta: {
         stable_name: "ender_3_4.2.2-{{marlin_version}}-manual_mesh_7x7-{{uid}}",
