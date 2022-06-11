@@ -20,7 +20,7 @@ export function downloadStable(tag: string) {
 export function downloadNightly() {
     return retry(() => new Promise<void>(function(resolve, reject) {
         exec(`cd ./dist && \
-            git clone -b bugfix-2.0.x https://github.com/MarlinFirmware/Marlin.git --depth 1 marlin_nightly
+            git clone -b bugfix-2.1.x https://github.com/MarlinFirmware/Marlin.git --depth 1 marlin_nightly
         `, function(err) {
             if (err) {
                 reject(err);
