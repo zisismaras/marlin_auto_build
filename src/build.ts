@@ -47,6 +47,13 @@ export async function processBuild(buildName: string, build: BuildSchema, kind: 
     await mkdir(latestConfigDir, {recursive: true});
     await writeFile(pathJoin(latestConfigDir, "Configuration.h"), configuration.join("\n"));
     await writeFile(pathJoin(latestConfigDir, "Configuration_adv.h"), configurationAdv.join("\n"));
+    //also copy bootscreen and statusscreen files so the config folders are complete
+    try {
+        await copyFile("./dist/current_build/Marlin/_Bootscreen.h", pathJoin(configDir, "_Bootscreen.h"));
+        await copyFile("./dist/current_build/Marlin/_Statusscreen.h", pathJoin(configDir, "_Statusscreen.h"));
+        await copyFile("./dist/current_build/Marlin/_Bootscreen.h", pathJoin(latestConfigDir, "_Bootscreen.h"));
+        await copyFile("./dist/current_build/Marlin/_Statusscreen.h", pathJoin(latestConfigDir, "_Statusscreen.h"));
+    } catch (_e) {} // eslint-disable-line
 
     return `./dist/assets/${firmware}`;
 }
