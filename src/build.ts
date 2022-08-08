@@ -30,6 +30,10 @@ export async function processBuild(buildName: string, build: BuildSchema, kind: 
 
     await runPlatformIO(build.board_env);
 
+    if ((await readdir(`./dist/current_build/.pio/build/${build.board_env}`)).find(f => f.includes("firmware") && f.includes(".hex"))) {
+        throw new Error(`Only 32-bit .bin firmware files are supported but "${build.board_env}" generated an 8-bit .hex file`);
+    }
+
     const firmware = (await readdir(`./dist/current_build/.pio/build/${build.board_env}`)).find(f => f.includes("firmware-") && f.includes(".bin"));
     if (!firmware) {
         throw new Error("Failed to build firmware");

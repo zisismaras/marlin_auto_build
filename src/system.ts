@@ -35,7 +35,7 @@ export function cloneConfig(repo: string, branch: string, path: string) {
     return retry(() => new Promise<void>(function(resolve, reject) {
         exec(`cd ./dist/current_build && \
             git clone -b ${branch} ${repo} --depth 1 __build_configs && \
-            cp ./__build_configs/${path}/* ./Marlin
+            cp ./__build_configs/${path.replace(" ", "\\ ")}/* ./Marlin
         `, function(err) {
             if (err) {
                 reject(err);
