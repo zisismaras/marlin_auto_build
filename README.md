@@ -92,7 +92,7 @@ As you can see the build is basically a json file but writing it in javascript a
 Let's explain all the different properties of the file.  
 
 * `board_env`
-  This is the env required by platformio to build the correct firmware for your specific motherboard. While we could infer this automatically (most of the time), having it hard-coded on the file is better since the system will run on its own without user interraction. Marlin has a little [guide](https://marlinfw.org/docs/basics/install_platformio_cli.html) on how to find the correct `board_env` for your printer.
+  This is the env required by platformio to build the correct firmware for your specific motherboard. While we could infer this automatically (most of the time), having it hard-coded on the file is better since the system will run on its own without user interraction. Marlin has a little [guide](https://marlinfw.org/docs/basics/install_platformio_cli.html) on how to find the correct `board_env` for your printer. **Note: only 32-bit boards are currently supported.**
 * `active` Enables/disables the build. Default is `true`.
 * `only` Set to `"stable"` or `"nightly"` to build only a single branch. By default both are built.
 * `meta`
