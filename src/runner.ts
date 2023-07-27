@@ -212,6 +212,8 @@ async function doBuild(latestVersion: string, kind: "stable" | "nightly", buildD
 
     if (devMode) return;
 
+    if (assets.length === 0) return;
+
     console.log(chalk.green("creating release"));
     const uploadUrl = await createRelease(latestVersion, kind, currentDateTime);
     for (const asset of assets) {
