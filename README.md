@@ -61,6 +61,7 @@ Here is a build i am using for my Ender 3 that enables the bed leveling helper p
 module.exports = {
     board_env: "STM32F103RE_creality",
     active: true,
+    min_version: "2.1.2",
     meta: {
         stable_name: "ender_3_4.2.2-{{marlin_version}}-{{uid}}",
         nightly_name: "ender_3_4.2.2-{{current_date}}-{{uid}}"
@@ -94,6 +95,7 @@ Let's explain all the different properties of the file.
 * `board_env`
   This is the env required by platformio to build the correct firmware for your specific motherboard. While we could infer this automatically (most of the time), having it hard-coded on the file is better since the system will run on its own without user interraction. Marlin has a little [guide](https://marlinfw.org/docs/basics/install_platformio_cli.html) on how to find the correct `board_env` for your printer. **Note: only 32-bit boards are currently supported.**
 * `active` Enables/disables the build. Default is `true`.
+* `min_version` Only build Marlin versions `>=` than this semver string. No `min_version` is used by default.
 * `only` Set to `"stable"` or `"nightly"` to build only a single branch. By default both are built.
 * `meta`
   Here we define the filenames we want for our 2 firmwares (stable and nightly). They can be whatever you want. There is also a set of variables (enclosed in `{{}}`) that you can use in them:
