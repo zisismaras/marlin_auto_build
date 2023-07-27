@@ -22,7 +22,7 @@ export async function processBuild(buildName: string, build: BuildSchema, kind: 
         await cloneConfig(repo, branch, configPath);
     } catch (e) {
         if ((<Error>e).message.includes("Could not find remote branch")) {
-            console.warn(chalk.yellow(`Skipping builds: Default configurations for ${branch} do not exist.`));
+            console.warn(chalk.yellow(`Skipping build: Default configurations for ${branch} do not exist.`));
             return;
         }
     }

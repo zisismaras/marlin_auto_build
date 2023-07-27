@@ -2,6 +2,7 @@ import {mkdir, rm, writeFile, readFile, cp, copyFile} from "fs/promises";
 import {randomInt, createHash} from "crypto";
 import chalk from "chalk";
 import dayjs from "dayjs";
+import semver from "semver";
 import {getLatestStable, getLatestNightly, createRelease, uploadAsset} from "./github";
 import {loadBuilds, BuildSchema} from "./prepare";
 import {processBuild} from "./build";
@@ -126,6 +127,18 @@ async function shouldBuild(
                 console.log(chalk.cyan(`[disabled] ${chalk.underline(buildName)}`));
                 continue;
             }
+            //skip versions less than min_version if set (only in stable)
+            if (kind === "stable" && loadedBuild.min_version) {
+                if (!semver.valid(loadedBuild.min_version)) {
+                    throw new Error(`${buildName}->min_version: ${loadedBuild.min_version} is not a valid semver string`);
+                }
+                //marlin versions have an extra digit which we have to remove to be valid semver (2.1.1.1 -> 2.1.1)
+                const parsedLatest = semver.coerce(latestVersion);
+                if (parsedLatest && semver.lt(parsedLatest, loadedBuild.min_version)) {
+                    console.log(chalk.cyan(`[ignored] ${chalk.underline(buildName)}`));
+                    continue;
+                }
+            }
             if (!trackedBuilds[buildName]) {
                 //it's a new build
                 newBuilds[buildName] = {version: latestVersion, md5, build: loadedBuild, action: "create"};
@@ -152,6 +165,18 @@ async function shouldBuild(
                 console.log(chalk.cyan(`[disabled] ${chalk.underline(buildName)}`));
                 continue;
             }
+            //skip versions less than min_version if set (only in stable)
+            if (kind === "stable" && loadedBuild.min_version) {
+                if (!semver.valid(loadedBuild.min_version)) {
+                    throw new Error(`${buildName}->min_version: ${loadedBuild.min_version} is not a valid semver string`);
+                }
+                //marlin versions have an extra digit which we have to remove to be valid semver (2.1.1.1 -> 2.1.1)
+                const parsedLatest = semver.coerce(latestVersion);
+                if (parsedLatest && semver.lt(parsedLatest, loadedBuild.min_version)) {
+                    console.log(chalk.cyan(`[ignored] ${chalk.underline(buildName)}`));
+                    continue;
+                }
+            }
             const hash = createHash("md5");
             hash.update(await readFile(buildName));
             const md5 = hash.digest("hex");
@@ -175,6 +200,7 @@ async function doBuild(latestVersion: string, kind: "stable" | "nightly", buildD
         if (buildDef.action === "ignore") continue;
         console.log(chalk.green(`building ${chalk.underline(buildName)}`));
         const buildPath = await processBuild(buildName, buildDef.build, kind, latestVersion);
+        if (!buildPath) continue;
         let filename = buildDef.build.meta[`${kind}_name`]
             .replace("{{marlin_version}}", latestVersion)
             .replace("{{current_date}}", currentDate)

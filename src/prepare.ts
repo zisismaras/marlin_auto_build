@@ -8,6 +8,7 @@ const buildSchema = z.object({
     include: z.string().min(1).or(z.array(z.string().min(1))).optional(),
     active: z.boolean().optional(),
     only: z.literal("stable").or(z.literal("nightly")).optional(),
+    min_version: z.string().optional(),
     meta: z.object({
         stable_name: z.string().min(1),
         nightly_name: z.string().min(1)

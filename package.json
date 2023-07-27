@@ -25,10 +25,12 @@
     "chalk": "4.1.2",
     "dayjs": "1.10.7",
     "p-retry": "4.6.1",
+    "semver": "7.5.4",
     "zod": "3.11.6"
   },
   "devDependencies": {
     "@types/node": "16.10.1",
+    "@types/semver": "7.5.0",
     "@typescript-eslint/eslint-plugin": "4.28.4",
     "@typescript-eslint/parser": "4.28.4",
     "eslint": "7.31.0",
