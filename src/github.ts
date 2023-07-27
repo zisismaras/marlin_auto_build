@@ -8,7 +8,7 @@ const request = axios.create({
     headers: {
         "user-agent": `marlin_auto_build/${pkg.version}`,
         "Accept": "application/vnd.github.v3+json",
-        "authorization": `Bearer ${process.env.GITHUB_TOKEN}`
+        "authorization": process.argv[2] === "--dev" ? "" : `Bearer ${process.env.GITHUB_TOKEN}`
     }
 });
 
