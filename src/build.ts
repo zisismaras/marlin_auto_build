@@ -18,7 +18,14 @@ export async function processBuild(buildName: string, build: BuildSchema, kind: 
     } else {
         branch = build.based_on.nightly_branch.replace("{{marlin_version}}", tagOrSha).replace("{{releaseType}}", kind);
     }
-    await cloneConfig(repo, branch, configPath);
+    try {
+        await cloneConfig(repo, branch, configPath);
+    } catch (e) {
+        if ((<Error>e).message.includes("Could not find remote branch")) {
+            console.warn(chalk.yellow(`Skipping builds: Default configurations for ${branch} do not exist.`));
+            return;
+        }
+    }
 
     const configuration = (await readFile("./dist/current_build/Marlin/Configuration.h", "utf8")).split("\n");
     updateConfiguration(configuration, build.configuration);
