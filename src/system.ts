@@ -2,6 +2,7 @@ import {exec} from "child_process";
 import retry from "p-retry";
 
 export function downloadStable(tag: string) {
+    const tag = "2.1.2.1"
     return retry(() => new Promise<void>(function(resolve, reject) {
         exec(`cd ./dist && \
             wget https://api.github.com/repos/MarlinFirmware/Marlin/tarball/${tag} && \

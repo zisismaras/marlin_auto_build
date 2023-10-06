@@ -13,7 +13,7 @@ const request = axios.create({
 });
 
 export async function getLatestStable(): Promise<string> {
-    const res = await retry(() => request.get("/MarlinFirmware/Marlin/releases?per_page=10"), {retries: 3});
+    const res = await retry(() => request.get("/MarlinFirmware/Marlin/releases"), {retries: 3});
     for (const release of res.data) {
         if (isMarlin2(release.tag_name)) {
             return release.tag_name;
@@ -26,7 +26,15 @@ export async function getLatestStable(): Promise<string> {
 
 function isMarlin2(version: string) {
     try {
-        return parseInt(version.split("")[0]) >= 2;
+        if (parseInt(version.split(".")[0]) >= 2) {
+            if (parseInt(version.split(".")[1]) >= 1) {
+                if (parseInt(version.split(".")[2]) >= 2) {
+                    if (parseInt(version.split(".")[3]) >= 1) {
+                        return true;
+                    }
+                }
+            }
+        }
     } catch (_e) {
         return false;
     }

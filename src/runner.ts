@@ -37,12 +37,12 @@ if (devMode) {
         return;
     }
 
-    if (!ignoreStable) {
+    //if (!ignoreStable) {
         console.log(chalk.green(`downloading stable ${chalk.underline(latestStable)}`));
         await downloadStable(latestStable);
         await doBuild(latestStable, "stable", stableBuilds);
 
-    }
+    //}
 
     if (!ignoreNightly) {
         console.log(chalk.green(`downloading nightly ${chalk.underline(latestNightly)}`));
