@@ -27,9 +27,9 @@ export async function getLatestStable(): Promise<string> {
 function isMarlin2(version: string) {
     try {
         if (parseInt(version.split("")[0]) >= 2) {
-            if (parseInt(version.split("")[1]) >= 1) {
-                if (parseInt(version.split("")[2]) >= 2) {
-                    if (parseInt(version.split("")[3]) >= 1) {
+            if (parseInt(version.split("")[2]) >= 1) {
+                if (parseInt(version.split("")[4]) >= 2) {
+                    if (parseInt(version.split("")[6]) >= 1) {
                         return true;
                     }
                 }
